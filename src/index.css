@@ -1,0 +1,501 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500;600&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f3f1eb;
+  --color-bg-light: #eae6db;
+  --color-bg-neutral: #eee8d8;
+  --color-bg-neutral-2: #dbd4bf;
+  --color-bg-white: #ffffff;
+  --color-fg-neutral: #8a8576;
+
+  --color-ink: #242424;
+  --color-ink-dim: #666666;
+  --color-ink-mute: #a2a2a2;
+  --color-ink-inverted: #ffffff;
+
+  --color-pink: #bf5a7a;
+  --color-pink-0: #e599b1;
+  --color-pink-1: #eabaca;
+  --color-pink-2: #eec9d5;
+
+  --color-teal: #168b9d;
+  --color-teal-0: #76aab2;
+  --color-teal-1: #65b6c3;
+  --color-teal-3: #b3d0d5;
+
+  --color-orange: #cb7836;
+  --color-orange-0: #e3a06b;
+  --color-orange-1: #eebc94;
+  --color-orange-2: #f7c9a5;
+
+  --color-green: #1a7b3f;
+  --color-green-0: #3c9b60;
+  --color-green-1: #7db592;
+  --color-green-2: #6dbd8b;
+
+  --color-starlight: #d8dde8;
+  --color-starlight-0: #eef1f8;
+  --color-starlight-1: #7b849e;
+  --color-starlight-2: rgba(216, 221, 232, 0.22);
+
+  --color-cosmos: #242424;
+  --color-cosmos-1: #1b1f30;
+  --color-cosmos-2: #05060d;
+
+  --font-display: "Gelica", "Cormorant Garamond", "Times New Roman", serif;
+
+  --font-mono: "Source Code Pro", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --font-body:
+    "Segoe UI", -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Helvetica Neue", system-ui, Roboto, "Noto Sans", sans-serif;
+
+  --text-h1: 2.25rem;
+  --text-h1--line-height: 1;
+  --text-h1--font-weight: 300;
+
+  --text-h2: 1.5rem;
+  --text-h2--line-height: 1;
+  --text-h2--font-weight: 300;
+
+  --text-subtitle: 1rem;
+  --text-subtitle--line-height: 1;
+  --text-subtitle--font-weight: 400;
+
+  --text-subtitle-2: 0.875rem;
+  --text-subtitle-2--line-height: 1;
+
+  --text-body-mono: 1.125rem;
+  --text-body-mono--line-height: 1;
+
+  --text-display: 4.5rem;
+  --text-display--line-height: 0.95;
+  --text-display--letter-spacing: -0.01em;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.55;
+  --text-small: 0.8125rem;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
+  --duration-slow: 480ms;
+
+  --container-narrow: 36rem;
+  --container-base: 64rem;
+  --container-wide: 80rem;
+}
+
+@font-face {
+  font-family: "Gelica";
+  src: url("/fonts/gelica/Gelica-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gelica";
+  src: url("/fonts/gelica/Gelica-LightItalic.woff2") format("woff2");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@layer base {
+  html {
+    background: var(--color-cosmos);
+    color: var(--color-ink-inverted);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  body {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: clip;
+    margin: 0;
+    background: var(--color-cosmos);
+  }
+
+  #root {
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background: var(--color-ink-inverted);
+    color: var(--color-cosmos);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-pink);
+
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* =========================================================
+   Button
+   ========================================================= */
+
+.btn-springy {
+  transform: translateZ(0);
+
+  transition:
+    transform 420ms cubic-bezier(0.34, 1.8, 0.55, 1),
+    background-color var(--duration-fast) var(--ease-out-soft),
+    color var(--duration-fast) var(--ease-out-soft);
+
+  will-change: transform;
+}
+
+.btn-springy:hover {
+  transform: translate3d(0, -2px, 0) scale(1.09);
+}
+
+.btn-springy:active {
+  transform: translate3d(0, 2px, 0) scale(0.9);
+
+  transition:
+    transform 95ms cubic-bezier(0.4, 0, 1, 1),
+    background-color var(--duration-fast) var(--ease-out-soft),
+    color var(--duration-fast) var(--ease-out-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-springy,
+  .btn-springy:hover,
+  .btn-springy:active {
+    transition:
+      background-color var(--duration-fast) var(--ease-out-soft),
+      color var(--duration-fast) var(--ease-out-soft);
+
+    transform: none;
+  }
+}
+
+/* =========================================================
+   Starfield
+   ========================================================= */
+
+.starfield {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 150vmax;
+  height: 150vmax;
+
+  /* transform: translate(-50%, -50%); */
+
+  transform-origin: center center;
+
+  pointer-events: none;
+
+  will-change: rotate;
+}
+
+/*
+ * Megan's original three-layer rotation.
+ *
+ * Far  = slow counter-clockwise
+ * Mid  = clockwise
+ * Near = faster counter-clockwise
+ */
+
+.starfield--far {
+  animation: starfield-far 360s linear infinite;
+}
+
+.starfield--mid {
+  animation: starfield-mid 260s linear infinite;
+}
+
+.starfield--near {
+  animation: starfield-near 190s linear infinite;
+}
+
+@keyframes starfield-far {
+  to {
+    rotate: -360deg;
+  }
+}
+
+@keyframes starfield-mid {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes starfield-near {
+  to {
+    rotate: -360deg;
+  }
+}
+
+/* =========================================================
+   Individual stars
+   ========================================================= */
+
+.star {
+  position: absolute;
+
+  border-radius: 9999px;
+
+  background: #ffffff;
+
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
+
+  animation: star-twinkle 9s ease-in-out infinite;
+}
+
+.starfield--near .star {
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   Click ripple
+   ========================================================= */
+
+@keyframes star-pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  35% {
+    opacity: 1;
+
+    transform: scale(var(--pulse-scale, 2.2));
+
+    box-shadow:
+      0 0 12px rgba(255, 255, 255, 1),
+      0 0 26px rgba(255, 255, 255, 0.55);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.star--pulse {
+  animation: star-pulse 800ms cubic-bezier(0.22, 1, 0.36, 1) 1;
+}
+
+/* =========================================================
+   Stars created by clicking
+   ========================================================= */
+
+.star-glyph {
+  font-family: var(--font-mono);
+
+  color: rgba(255, 255, 255, 1);
+
+  line-height: 1;
+
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 1),
+    0 0 20px rgba(255, 255, 255, 0.6);
+
+  box-shadow: none !important;
+
+  background: none !important;
+
+  translate: -50% -50%;
+
+  user-select: none;
+
+  pointer-events: none;
+
+  animation: star-glyph-twinkle 13s ease-in-out infinite;
+}
+
+@keyframes star-glyph-twinkle {
+  0%,
+  84%,
+  96%,
+  100% {
+    opacity: 1;
+  }
+
+  88% {
+    opacity: 0.5;
+  }
+
+  92% {
+    opacity: 0.95;
+  }
+
+  94% {
+    opacity: 0.65;
+  }
+}
+
+@keyframes star-birth {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+
+  30% {
+    opacity: 1;
+
+    transform: scale(3.4);
+
+    box-shadow:
+      0 0 16px rgba(255, 255, 255, 1),
+      0 0 36px rgba(255, 255, 255, 0.65);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.star--born {
+  animation: star-birth 1100ms cubic-bezier(0.22, 1, 0.36, 1) 1;
+}
+
+/* =========================================================
+   Welcome cursor
+   ========================================================= */
+
+.welcome-cursor {
+  will-change: transform;
+}
+
+.welcome-cursor__shape {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 18px;
+  height: 18px;
+
+  margin-left: -9px;
+  margin-top: -9px;
+
+  border-radius: 9999px;
+
+  background: rgba(255, 255, 255, 0.95);
+
+  box-shadow:
+    0 0 16px rgba(255, 255, 255, 0.6),
+    0 0 32px rgba(255, 255, 255, 0.35),
+    0 0 64px rgba(255, 255, 255, 0.18);
+
+  transition:
+    width 0.28s var(--ease-out-soft),
+    height 0.28s var(--ease-out-soft),
+    margin 0.28s var(--ease-out-soft);
+}
+
+.welcome-cursor[data-mode="link"] .welcome-cursor__shape {
+  width: 32px;
+  height: 32px;
+
+  margin-left: -16px;
+  margin-top: -16px;
+}
+
+html[data-welcome-cursor-active] *,
+html[data-welcome-cursor-active] {
+  cursor: none !important;
+}
+
+/* =========================================================
+   Shooting stars
+   ========================================================= */
+
+.shooting-star {
+  position: absolute;
+
+  pointer-events: none;
+
+  z-index: 30;
+
+  white-space: nowrap;
+
+  color: #ffffff;
+
+  font-family: var(--font-mono);
+
+  font-size: 16px;
+
+  line-height: 1;
+
+  opacity: 0;
+
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+
+  transform: rotate(var(--shoot-angle)) translate3d(0, 0, 0);
+
+  animation: shooting-star var(--shoot-duration) cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
+}
+
+@keyframes shooting-star {
+  0% {
+    opacity: 0;
+
+    transform: rotate(var(--shoot-angle)) translate3d(0, 0, 0);
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  75% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform: rotate(var(--shoot-angle))
+      translate3d(var(--shoot-dx), var(--shoot-dy), 0);
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .starfield--far,
+  .starfield--mid,
+  .starfield--near,
+  .star,
+  .star.star-glyph,
+  .shooting-star {
+    animation: none;
+  }
+}
