@@ -1,0 +1,197 @@
+---
+// Gallery card — the onboarding LibraryCard wrapped with gallery-specific
+// chrome (hover tilt hook, gloss overlay, "that's you" pill). Renders at the
+// same size as the onboarding card so the signature sits in the exact pixel
+// position the visitor drew it.
+import LibraryCard from "../onboarding/LibraryCard.astro";
+import type { CardColor } from "../../lib/visitor";
+
+interface Props {
+  name: string;
+  color: CardColor;
+  number: number;
+  issuedAt?: string;
+  isYou?: boolean;
+  signature?: string | null;
+  id?: string;
+}
+
+const {
+  name,
+  color,
+  number,
+  issuedAt = new Date().toISOString(),
+  isYou = false,
+  signature = null,
+  id,
+} = Astro.props;
+---
+
+<div
+  class="mini-card-wrap relative"
+  data-color={color}
+  data-cursor-bg={color}
+  data-mini-card-wrap
+  data-id={id}
+  transition:name={isYou ? "edit-card" : undefined}
+  transition:animate={isYou ? "initial" : undefined}
+>
+  {isYou && (
+    <span
+      class="mini-card-pill absolute -top-3 left-1/2 -translate-x-1/2 z-20 font-[family-name:var(--font-mono)] font-bold text-[12px] uppercase px-1.5 py-0.5 rounded-[2.5px] tracking-wide"
+    >
+      That&rsquo;s you!
+    </span>
+  )}
+
+  <div
+    data-color={color}
+    data-mini-card
+    class={`mini-card rounded-[24px] cursor-pointer ${
+      isYou ? "ring-1 ring-white shadow-[0_14px_28px_-8px_rgba(0,0,0,0.28),0_4px_10px_-2px_rgba(0,0,0,0.18)]" : ""
+    }`}
+  >
+    <LibraryCard
+      name={name}
+      color={color}
+      number={number}
+      issuedAt={issuedAt}
+      id={id ? `gallery-card-${id}` : undefined}
+      signature={signature}
+      glimmerSeedSalt={(number * 2654435761) ^ (id ? id.charCodeAt(0) * 131 + id.length : 0)}
+    />
+
+    <!-- glossy highlight that follows the cursor on hover -->
+    <div
+      aria-hidden="true"
+      data-mini-gloss
+      class="mini-gloss absolute inset-0 pointer-events-none opacity-0 rounded-[24px] transition-opacity duration-200"
+    ></div>
+  </div>
+</div>
+
+<style is:global>
+  /*
+    3D transform wrapper — the parent grid provides the perspective. We hold
+    off on will-change + preserve-3d until the user actually interacts so the
+    resting state stays on the text layer (no GPU rasterization blur).
+  */
+  /*
+    Gallery-card scaling — the underlying LibraryCard is fixed 388x252. We
+    scale the inner .mini-card via CSS transform and give the wrap a matching
+    layout box so flex sees the scaled size (3-4 cards fit per row).
+
+    The scale is set via the --mini-card-scale custom property, which is
+    populated by JS (ResizeObserver) in Grid.astro. The CSS trig identity
+    `tan(atan2(100cqi, 388px))` is the fallback, but some mobile browsers
+    fail to evaluate it when combined with cqi units, leaving cards at full
+    388px (which busts the layout on narrow viewports). overflow: hidden on
+    the wrap is a final safety net so any layout breakage is clipped instead
+    of pushing the page sideways.
+  */
+  .mini-card-wrap {
+    container-type: inline-size;
+    width: 100%;
+    aspect-ratio: 388 / 252;
+    /* `overflow: clip` + `overflow-clip-margin` lets the "That's you!" pill
+       (positioned at -top-3) render past the card's top edge, while still
+       clipping runaway content if the inner card scaling fails. Falls back
+       to overflow: hidden in browsers without overflow-clip-margin support. */
+    overflow: hidden;
+    overflow: clip;
+    overflow-clip-margin: 36px;
+    transition: transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Skip rendering, layout, and animation work for off-screen cards.
+       Critical when the gallery has 1000+ cards: each card has 12-32 infinite
+       glimmer animations, so without this the browser ticks tens of thousands
+       of animations every frame and the cursor + scroll go laggy.
+       contain-intrinsic-size gives layout a placeholder height so scrollbars
+       and page height stay stable while cards are skipped. */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 252px;
+  }
+  /* Disable the optimization while interacting — content-visibility skips
+     rendering for off-screen elements, but FLIP shuffle and hover tilt need
+     the card painted even when partially scrolled away. */
+  .mini-card-wrap:hover,
+  .mini-card-wrap[data-tilting],
+  .mini-card-wrap[data-flying] {
+    content-visibility: visible;
+  }
+  /* Virtualization: cards more than ~1500px outside the viewport keep their
+     wrap (so layout / scrollbar height stay stable) but hide their children
+     entirely. JS in Grid.astro toggles data-virt-far via IntersectionObserver. */
+  .mini-card-wrap[data-virt-far] > * {
+    display: none;
+  }
+  .mini-card-wrap .mini-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 388px;
+    height: 252px;
+    transform-origin: top left;
+    transform: scale(var(--mini-card-scale, tan(atan2(100cqi, 388px))));
+  }
+  .mini-card-wrap:hover,
+  .mini-card-wrap[data-tilting],
+  .mini-card-wrap[data-flying] {
+    transform-style: preserve-3d;
+    will-change: transform;
+    /* Let the 3D tilt + hover-shadow extend past the cell during interaction. */
+    overflow: visible;
+  }
+  .mini-card-wrap[data-tilting] {
+    transition: none;
+  }
+  .mini-card-wrap[data-flying] {
+    transition: none;
+    z-index: 40;
+  }
+
+  .mini-card {
+    transition: box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .mini-card-wrap:hover .mini-card {
+    box-shadow:
+      0 24px 48px -12px rgba(0, 0, 0, 0.35),
+      0 8px 18px -6px rgba(0, 0, 0, 0.22);
+  }
+
+  /* Glossy cursor-tracked highlight. mix-blend-mode is only enabled on hover —
+     applying it to every card creates 1000+ compositing layers in big galleries
+     and tanks scroll/cursor performance. */
+  .mini-gloss {
+    background: radial-gradient(
+      180px 180px at var(--gloss-x, 50%) var(--gloss-y, 50%),
+      rgba(255, 255, 255, 0.35),
+      rgba(255, 255, 255, 0) 70%
+    );
+  }
+  .mini-card-wrap:hover .mini-gloss {
+    opacity: 1;
+    mix-blend-mode: soft-light;
+  }
+
+  /* "THAT'S YOU!" pill — color matches the card's family. */
+  [data-color="pink"] > .mini-card-pill {
+    background: var(--color-pink-2);
+    color: #6f1f3a;
+  }
+  [data-color="teal"] > .mini-card-pill {
+    background: var(--color-teal-3);
+    color: #0f4a55;
+  }
+  [data-color="green"] > .mini-card-pill {
+    background: var(--color-green-2);
+    color: #0d3a1d;
+  }
+  [data-color="orange"] > .mini-card-pill {
+    background: var(--color-orange-2);
+    color: #7e4314;
+  }
+  [data-color="neutral"] > .mini-card-pill {
+    background: var(--color-bg-neutral);
+    color: var(--color-ink-dim);
+  }
+</style>

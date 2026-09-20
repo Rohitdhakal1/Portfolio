@@ -1,0 +1,353 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Sidebar from "../components/home/Sidebar.astro";
+import Footer from "../components/home/Footer.astro";
+import CustomCursor from "../components/home/CustomCursor.astro";
+import Grid from "../components/gallery/Grid.astro";
+import StatsPanel from "../components/gallery/StatsPanel.astro";
+import { getCurrentVisitor, listVisitorsLite, getGalleryStats } from "../lib/visitor-server";
+import { SEED_VISITORS } from "../lib/seed-visitors";
+
+export const prerender = false;
+
+const PAGE_SIZE = 48;
+
+// All three reads are independent (the visitor lookup only needs the cookie),
+// so issue them together — one D1 round trip instead of two in series.
+const [visitor, realVisitors, galleryStats] = await Promise.all([
+  getCurrentVisitor(Astro),
+  listVisitorsLite(Astro, PAGE_SIZE),
+  getGalleryStats(Astro),
+]);
+const cursorColor = visitor?.color ?? "pink";
+// `withSignature` is the same indexed COUNT the old countVisitors ran — the
+// number of real gallery cards, used for Grid's "load more" pagination.
+const realTotal = galleryStats.withSignature;
+const seedCount = SEED_VISITORS.length;
+const offsetVisitors = realVisitors.map((v) => ({ ...v, number: v.number + seedCount }));
+
+// Ensure the current visitor's card is in the initial batch even if they
+// signed up long ago and aren't in the latest PAGE_SIZE. Skip when the
+// visitor hasn't drawn a signature — those cards are excluded from gallery.
+let extraYou: typeof offsetVisitors[number] | null = null;
+if (visitor && visitor.signature && !offsetVisitors.some((v) => v.id === visitor.id)) {
+  extraYou = { ...visitor, number: visitor.number + seedCount, signature: null };
+}
+
+const visitors = [
+  ...(extraYou ? [extraYou] : []),
+  ...offsetVisitors,
+  ...SEED_VISITORS,
+].sort((a, b) => b.number - a.number);
+const total = galleryStats.maxNumber + seedCount;
+
+const ordinal = (n: number) => {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+};
+
+const visitorNumber = visitor ? visitor.number + seedCount : 0;
+const subtitle = visitor
+  ? visitor.signature
+    ? `You're our ${ordinal(visitorNumber)} guest!`
+    : "Add a doodle to join the gallery"
+  : total === 0
+    ? "Be the first to sign in."
+    : `${total} ${total === 1 ? "guest has" : "guests have"} signed in.`;
+---
+
+<BaseLayout title="Visitor Gallery — Megan Yap" description="Visitor cards left by people who've stopped by Megan's World.">
+  <div class="flex items-stretch min-h-screen">
+    <Sidebar active="gallery" anon={!visitor} visitorCard={visitor ? { name: visitor.name, color: visitor.color, number: visitor.number, signature: visitor.signature } : null} />
+
+    <main class="flex flex-col gap-6 p-4 sm:p-6 md:p-10 flex-1 min-w-0">
+      <header class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 md:gap-6">
+        <div class="flex items-end gap-3 sm:gap-4 flex-wrap">
+          <h1
+            class="font-[family-name:var(--font-display)] font-light text-[28px] sm:text-[32px] md:text-[36px] leading-none text-[var(--color-ink)]"
+          >
+            Visitor Gallery
+          </h1>
+          <p
+            data-gallery-subtitle
+            class="font-[family-name:var(--font-mono)] text-sm sm:text-base uppercase text-[var(--color-ink-dim)] mb-1"
+          >
+            {subtitle}
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          {visitor ? (
+            <a
+              href="/onboarding?edit"
+              data-gallery-edit-btn
+              class="gallery-action bg-[var(--color-bg-neutral)] rounded-[4px] px-2 py-1 flex items-center gap-2 font-[family-name:var(--font-mono)] text-base uppercase text-[var(--color-fg-neutral)] hover:text-[var(--color-ink)] hover:bg-[var(--color-bg-neutral-2)] transition-colors"
+            >
+              Edit my card
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                <path d="m15 5 4 4" />
+              </svg>
+            </a>
+          ) : null}
+          {
+            visitors.length > 1 && (
+              <button
+                type="button"
+                data-shuffle
+                class="gallery-shuffle bg-[var(--color-bg-neutral)] rounded-[4px] px-2 py-1 flex items-center gap-2 font-[family-name:var(--font-mono)] text-base uppercase text-[var(--color-fg-neutral)] hover:text-[var(--color-ink)] hover:bg-[var(--color-bg-neutral-2)] transition-colors"
+              >
+                Shuffle
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M16 3h5v5" />
+                  <path d="M4 20L21 3" />
+                  <path d="M21 16v5h-5" />
+                  <path d="M15 15l6 6" />
+                  <path d="M4 4l5 5" />
+                </svg>
+              </button>
+            )
+          }
+        </div>
+      </header>
+
+      {total > 0 && (
+        <StatsPanel stats={galleryStats} total={total} />
+      )}
+
+      {!visitor && (
+        <a
+          href="/onboarding?from=gallery"
+          data-gallery-signin-btn
+          class="flex items-center justify-center gap-2 rounded-[12px] bg-[var(--color-ink)] px-4 py-3 font-[family-name:var(--font-mono)] text-sm uppercase text-[var(--color-bg)] hover:bg-[var(--color-ink-dim)] transition-colors"
+        >
+          Sign the guestbook
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 5v14" />
+            <path d="M5 12h14" />
+          </svg>
+        </a>
+      )}
+
+      {
+        visitors.length === 0 ? (
+          <div class="border border-dashed border-[var(--color-bg-neutral-2)] rounded-[12px] p-10 text-center">
+            <p class="font-[family-name:var(--font-mono)] uppercase text-sm text-[var(--color-ink-dim)]">
+              No visitors yet — sign the visitor card on your way in.
+            </p>
+          </div>
+        ) : (
+          <Grid
+            visitors={visitors}
+            youId={visitor?.id}
+            totalReal={realTotal}
+            pageSize={PAGE_SIZE}
+          />
+        )
+      }
+
+    </main>
+  </div>
+
+  <Footer color={cursorColor} active="gallery" />
+
+  <CustomCursor color={cursorColor} />
+
+  <style>
+    /* Shuffle button icon spins + the button nudges right on click. */
+    .gallery-shuffle svg {
+      transition: transform 0.18s var(--ease-out-soft);
+    }
+    .gallery-shuffle[data-spinning] svg {
+      animation: gallery-shuffle-spin 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes gallery-shuffle-spin {
+      from {
+        transform: rotate(0);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .gallery-shuffle[data-spinning] svg {
+        animation: none;
+      }
+    }
+  </style>
+
+  <script>
+    /*
+      Re-wire the shuffle button on every page visit so ClientRouter swaps
+      don't leave a stale listener. Uses [data-shuffle-wired] as a guard.
+    */
+    function wireShuffle() {
+      const btn = document.querySelector<HTMLButtonElement>("[data-shuffle]");
+      if (!btn) return;
+      if (btn.dataset.shuffleWired === "1") return;
+      btn.dataset.shuffleWired = "1";
+      btn.addEventListener("click", () => {
+        window.dispatchEvent(new CustomEvent("gallery:shuffle"));
+        btn.setAttribute("data-spinning", "");
+        window.setTimeout(() => btn.removeAttribute("data-spinning"), 620);
+      });
+    }
+    wireShuffle();
+    document.addEventListener("astro:page-load", wireShuffle);
+  </script>
+
+  <script>
+    /*
+      Client-side fallback: if the server didn't recognize the visitor (cookie
+      lost — common on mobile Safari / private browsing), check localStorage
+      for the cached card and patch the UI so the subtitle, edit button, and
+      "That's you!" pill still work.
+    */
+    import { readCachedCard } from "../lib/visitor";
+    import { SEED_VISITORS } from "../lib/seed-visitors";
+
+    function patchGalleryIdentity() {
+      const grid = document.querySelector<HTMLElement>("[data-gallery-grid]");
+      if (!grid) return;
+      // If the server already identified the visitor, nothing to patch.
+      if (grid.dataset.youId) return;
+
+      const card = readCachedCard();
+      if (!card) return;
+
+      const seedCount = SEED_VISITORS.length;
+      const visitorNumber = card.number + seedCount;
+
+      // Patch subtitle
+      const subtitle = document.querySelector<HTMLElement>("[data-gallery-subtitle]");
+      if (subtitle) {
+        const ordinal = (n: number) => {
+          const s = ["th", "st", "nd", "rd"];
+          const v = n % 100;
+          return n + (s[(v - 20) % 10] || s[v] || s[0]);
+        };
+        subtitle.textContent = `You're our ${ordinal(visitorNumber)} guest!`;
+      }
+
+      // Hide the sign-in banner since visitor is recognized via localStorage
+      const signInBtn = document.querySelector<HTMLElement>("[data-gallery-signin-btn]");
+      if (signInBtn) signInBtn.remove();
+
+      // Set youId on grid so card interactions (detail edit, "That's you!" highlight) work
+      grid.dataset.youId = card.id;
+
+      // Add "That's you!" pill to matching card
+      const wrap = grid.querySelector<HTMLElement>(`[data-mini-card-wrap][data-id="${card.id}"]`);
+      if (wrap && !wrap.querySelector(".mini-card-pill")) {
+        const pill = document.createElement("span");
+        pill.className = "mini-card-pill absolute -top-3 left-1/2 -translate-x-1/2 z-20 font-[family-name:var(--font-mono)] font-bold text-[12px] uppercase px-1.5 py-0.5 rounded-[2.5px] tracking-wide";
+        pill.textContent = "That\u2019s you!";
+        wrap.prepend(pill);
+      }
+    }
+    patchGalleryIdentity();
+    document.addEventListener("astro:page-load", patchGalleryIdentity);
+  </script>
+
+  <script>
+    /*
+      Cross-page deep-scroll: the sidebar visitor-card pill on other routes
+      sets a sessionStorage flag before navigating here. When this page
+      mounts, consume the flag and scroll to the user's card. Runs after the
+      identity-patch script so [data-you-id] is already populated when the
+      cookie is missing.
+    */
+    function scrollToYouIfRequested() {
+      let flag: string | null = null;
+      try {
+        flag = sessionStorage.getItem("gallery:scroll-to-you");
+      } catch {}
+      if (!flag) return;
+      const grid = document.querySelector<HTMLElement>("[data-gallery-grid]");
+      const youId = grid?.dataset.youId;
+      if (!grid || !youId) return;
+      const card = grid.querySelector<HTMLElement>(
+        `[data-mini-card-wrap][data-id="${youId}"]`,
+      );
+      if (!card) return;
+      try {
+        sessionStorage.removeItem("gallery:scroll-to-you");
+      } catch {}
+      const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      const flash = () => {
+        card.classList.add("sidebar-card-flash");
+        window.setTimeout(() => card.classList.remove("sidebar-card-flash"), 1400);
+      };
+      // Defer one frame so layout settles after page transition.
+      requestAnimationFrame(() => {
+        card.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+        if (reduced) {
+          flash();
+          return;
+        }
+        // Wait for scroll to settle before flashing — otherwise the pulse
+        // plays mid-scroll and the user never sees it. Prefer scrollend
+        // event; fall back to position-stability poll for browsers without
+        // it (Safari < 18) and to a hard timeout as a final safety net.
+        let settled = false;
+        const fire = () => {
+          if (settled) return;
+          settled = true;
+          flash();
+        };
+        const hasScrollEnd = "onscrollend" in window;
+        if (hasScrollEnd) {
+          window.addEventListener("scrollend", fire, { once: true });
+          window.setTimeout(fire, 1200); // safety net
+        } else {
+          let lastY = window.scrollY;
+          let stableFrames = 0;
+          const tick = () => {
+            if (settled) return;
+            const y = window.scrollY;
+            if (Math.abs(y - lastY) < 0.5) {
+              stableFrames++;
+              if (stableFrames >= 4) return fire();
+            } else {
+              stableFrames = 0;
+              lastY = y;
+            }
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+          window.setTimeout(fire, 1200);
+        }
+      });
+    }
+    scrollToYouIfRequested();
+    document.addEventListener("astro:page-load", scrollToYouIfRequested);
+  </script>
+</BaseLayout>

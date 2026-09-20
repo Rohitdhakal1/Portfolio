@@ -1,0 +1,816 @@
+---
+import Logo from "../ui/Logo.astro";
+import TableOfContents from "./TableOfContents.astro";
+import type { CardColor } from "../../lib/visitor";
+
+interface Props {
+  active?: "work" | "about" | "playground" | "gallery";
+  anon?: boolean;
+  visitorCard?: {
+    name: string;
+    color: CardColor;
+    number: number;
+    signature?: string | null;
+  } | null;
+}
+
+const { active = "work", anon = false, visitorCard = null } = Astro.props;
+---
+
+<!-- Tab that sticks out on the left edge when the sidebar is collapsed -->
+<button
+  type="button"
+  data-sidebar-toggle
+  aria-label="Open sidebar"
+  aria-controls="site-sidebar"
+  aria-expanded="false"
+  class="sidebar-tab"
+>
+  <span class="sidebar-tab-dots" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </span>
+  <span class="sidebar-tab-arrow" aria-hidden="true">›</span>
+</button>
+
+<!-- Backdrop closes the sidebar on small screens -->
+<div data-sidebar-backdrop class="sidebar-backdrop" aria-hidden="true"></div>
+
+<aside
+  id="site-sidebar"
+  data-sidebar
+  transition:name="sidebar"
+  transition:animate="none"
+  class="site-sidebar bg-[var(--color-bg-light)] flex flex-col gap-6 p-10 w-[303px] flex-shrink-0"
+>
+  <button type="button" data-sidebar-close aria-label="Close sidebar" class="sidebar-close">
+    <span aria-hidden="true">×</span>
+  </button>
+
+  <div class="flex flex-col gap-2">
+    <a
+      href="/home"
+      aria-label="Home"
+      data-logo-link
+      class="sidebar-logo-link inline-block w-fit transition-transform hover:scale-[1.08] active:scale-[1.18] relative"
+    >
+      <span data-logo-spin class="sidebar-logo-spin inline-block">
+        <Logo class="mb-1" />
+      </span>
+      <span
+        data-logo-sparks
+        aria-hidden="true"
+        class="sidebar-logo-sparks pointer-events-none absolute inset-0"></span>
+    </a>
+    <h1
+      class="font-[family-name:var(--font-display)] font-light text-[36px] leading-none text-[var(--color-ink)]"
+    >
+      Megan Yap
+    </h1>
+    <p
+      class="font-[family-name:var(--font-mono)] text-base uppercase text-[var(--color-ink-dim)] leading-snug"
+    >
+      CS &amp; Linguistics @ Cornell
+    </p>
+    <p
+      class="font-[family-name:var(--font-body)] text-base text-[var(--color-ink-dim)] leading-snug"
+    >
+      I'm a designer who loves building and tinkering! Looking for jobs starting Feb 2027.
+    </p>
+    <p
+      class="font-[family-name:var(--font-body)] text-base text-[var(--color-ink-dim)] leading-snug"
+    >
+      Interning <span class="text-[var(--color-ink)]">@Google</span>, previously at <span
+        class="text-[var(--color-ink)]">@Splunk</span
+      > and various startups.
+    </p>
+  </div>
+
+  <TableOfContents active={active} anon={anon} />
+
+  <div class="flex flex-col gap-0.5">
+    <p class="font-[family-name:var(--font-mono)] text-base uppercase text-[var(--color-ink)]">
+      Outbound
+    </p>
+    <p class="font-[family-name:var(--font-body)] text-base text-[var(--color-ink-dim)]">
+      <a
+        href="mailto:may52@cornell.edu"
+        class="text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] underline-offset-4 hover:underline"
+        >Email</a
+      >,
+      <a
+        href="https://www.linkedin.com/in/megan-qz-yap/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] underline-offset-4 hover:underline"
+        >LinkedIn</a
+      >,
+      <a
+        href="https://github.com/megany128"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] underline-offset-4 hover:underline"
+        >GitHub</a
+      >,
+      <a
+        href="https://x.com/maqzyap"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] underline-offset-4 hover:underline"
+        >X</a
+      >,
+      <a
+        href="https://drive.google.com/file/d/1P7hNfuNp0-RYu6j4RtvulAVfVpvHy9-1/view?usp=sharing"
+        target="_blank"
+        rel="noopener"
+        class="text-[var(--color-ink-dim)] hover:text-[var(--color-ink)] underline-offset-4 hover:underline"
+        >Resume</a
+      >
+    </p>
+  </div>
+
+  {
+    visitorCard && (
+      <div class="sidebar-visitor-card-wrap" data-color={visitorCard.color}>
+        <a
+          href="/visitor-gallery"
+          data-sidebar-card
+          data-cursor-bg={visitorCard.color}
+          class="sidebar-card-pill"
+          aria-label="Your visitor card — view gallery"
+        >
+          <span class="sidebar-card-pill__dot" />
+          <span class="sidebar-card-pill__label">My visitor card</span>
+        </a>
+        <div class="sidebar-card-popover">
+          <a
+            href="/visitor-gallery"
+            class="sidebar-card-popover__link"
+            data-cursor-bg={visitorCard.color}
+          >
+            <pre class="sidebar-card__art" aria-hidden="true">
+              {visitorCard.color === "teal"
+                ? "⠀⠀⠀⢸⣦⡀⠀⠀⠀⠀⢀⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⢸⣏⠻⣶⣤⡶⢾⡿⠁⠀⢠⣄⡀⢀⣴⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⣀⣼⠷⠀⠀⠁⢀⣿⠃⠀⠀⢀⣿⣿⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠴⣾⣯⣅⣀⠀⠀⠀⠈⢻⣦⡀⠒⠻⠿⣿⡿⠿⠓⠂⠀⠀⢀⡇⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠉⢻⡇⣤⣾⣿⣷⣿⣿⣤⠀⠀⣿⠁⠀⠀⠀⢀⣴⣿⣿⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠸⣿⡿⠏⠀⢀⠀⠀⠿⣶⣤⣤⣤⣄⣀⣴⣿⡿⢻⣿⡆⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠟⠁⠀⢀⣼⠀⠀⠀⠹⣿⣟⠿⠿⠿⡿⠋⠀⠘⣿⣇⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⢳⣶⣶⣿⣿⣇⣀⠀⠀⠙⣿⣆⠀⠀⠀⠀⠀⠀⠛⠿⣿⣦⣤⣀⠀⠀\n⠀⠀⠀⠀⠀⠀⣹⣿⣿⣿⣿⠿⠋⠁⠀⣹⣿⠳⠀⠀⠀⠀⠀⠀⢀⣠⣽⣿⡿⠟⠃\n⠀⠀⠀⠀⠀⢰⠿⠛⠻⢿⡇⠀⠀⠀⣰⣿⠏⠀⠀⢀⠀⠀⠀⣾⣿⠟⠋⠁⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠋⠀⠀⣰⣿⣿⣾⣿⠿⢿⣷⣀⢀⣿⡇⠁⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠋⠉⠁⠀⠀⠀⠀⠙⢿⣿⣿⠇⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀"
+                : visitorCard.color === "green"
+                  ? "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⢾⣛⡆⠈⡏⠰⠶⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢦⣿⣄⣉⣁⣤⠽⣦⣤⡶⠶⣤⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠚⠹⡉⢃⣴⠟⠉⠀⠀⠀⠀⠉⠻⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⢡⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⢷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡂⣿⡇⠀⠀⠀⠀⣠⣤⣀⠀⠀⠀⠘⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⢻⣷⠀⠀⠀⠀⢯⡉⣿⡆⠀⠀⣰⡇⠀⢀⣀⢤⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣧⣀⠀⠀⢀⣴⡟⠀⠀⣰⣿⡷⢏⡭⠔⠹⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠛⠿⠿⠟⠋⠀⢀⣼⣿⣿⣿⠿⣭⡉⢛⡃⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⣀⣤⠶⠿⣟⣟⣝⡷⣲⢤⣀⠀⠀⠀⠀⠀⠀⢠⠀⠀⠀⠀⠀⠀⣠⣾⡿⠃⠹⡟⢖⠢⠽⠦⠁⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⢀⣴⠞⠁⠀⠀⠀⠀⠀⠉⠙⢦⣕⡯⣷⣄⠀⠀⠠⣴⠋⢓⡶⠂⠀⢀⣼⣿⠟⠁⠀⠀⠈⠺⡄⠋⣀⣰⣀⠀⠀⠀⠀⠀⠀\n⠀⣠⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢯⣒⢭⣦⠀⠀⢸⠕⠦⠇⠀⣤⣿⡿⠃⣠⠴⠶⠶⣤⡀⠀⠀⠼⠿⡏⠀⠀⠀⠀⠀⠀\n⢀⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣝⡫⢧⠀⠀⠀⠀⣠⣾⡿⠉⠀⢸⠁⢀⣀⠀⠈⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⣼⠁⠀⠀⠀⠀⣠⣶⣿⣿⣷⣦⡀⠀⠀⠀⠀⠙⡮⣛⡆⠀⠀⣰⣿⡏⢐⡀⠀⠸⣦⣀⣨⠇⠒⣸⣀⣀⣄⣀⡀⠀⠀⠀⠀⠀⠀\n⢹⠆⠀⠀⠀⢠⣿⡿⠃⠀⠀⠉⢻⡄⠀⠀⠀⠀⠙⣗⢿⠀⣸⡟⡙⢷⡈⢠⠀⡀⠈⠉⣁⠘⣠⠟⠉⠉⠙⢿⣿⡆⠀⠀⠀⠀⠀\n⠘⣇⠀⠀⠀⠈⢿⡇⠀⢲⠀⠀⠀⢻⡀⠀⢤⣴⡀⠹⣽⣴⡿⣁⠀⠈⠻⣦⣤⣥⣌⣡⡤⠞⠁⠀⣰⠛⠆⣸⣿⡇⠀⠀⠀⠀⠀"
+                  : visitorCard.color === "orange"
+                    ? "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣤⣴⣦⣦⡄⠀⠀⠀⠀\n⠀⠀⠀⣀⣤⣤⣤⣤⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣶⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀\n⠀⣰⣿⣿⠿⢿⣿⣿⣿⣿⣿⣷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⠿⠛⠉⠉⠁⠉⠉⠙⠻⣧⠀\n⣰⣿⣿⡟⠀⠀⠈⠙⠛⠿⣿⣿⣿⣿⣿⣶⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⣿⡿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡆\n⣿⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠈⠙⠛⠿⢿⣿⣿⣦⣀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣽⣧\n⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⢀⠈⠙⠻⣿⣷⣄⣤⣤⣤⣦⣾⡿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣼⣿⡿\n⣿⣿⣿⣷⣄⣀⣀⣀⣀⣠⣤⣶⣾⣿⣿⣿⣿⣿⣿⣷⣾⣿⣿⣿⣿⣿⣿⣶⣶⣿⣶⣶⣤⣀⠀⠀⢀⠀⠀⠀⠀⣀⣠⣾⣿⣿⠃\n⠘⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠛⠋⠉⠉⣴⣾⣿⣿⣿⣿⣿⣿⣯⣍⠉⠛⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠃⠀\n⠀⠀⠉⠛⠻⠿⠿⠿⠿⠿⠿⠛⠋⠀⠀⠀⠀⢠⣾⣿⣿⠟⠁⠁⠀⠈⠻⣿⣿⣷⡀⠀⠀⠉⠛⠻⠿⠿⠻⠿⠿⠟⠋⠁⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠹⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⡏⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣿⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⣀⣠⣤⣴⣶⣶⣾⣿⣿⣿⣿⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣧⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⣷⣦⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⣴⣿⣿⣿⠟⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⢿⣿⣿⣿⣿⣿⣿⣷⣤⡀⠀⠀⠀⠀⠀\n⠀⣸⣿⣿⡿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠛⠻⣿⣿⣿⣧⡀⠀⠀⠀\n⢀⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣿⣿⣧⠀⠀⠀\n⠸⣿⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣿⣿⡆⠀⠀\n⠀⠹⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⡧⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⠏⠀⠀"
+                    : "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⢔⣶⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠗⡿⣾⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡼⠓⡞⢩⣯⡀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠰⡹⠁⢰⠃⣩⣿⡇⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢷⣿⠿⣉⣩⠛⠲⢶⡠⢄⠐⣣⠃⣰⠗⠋⢀⣯⠁⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⣯⣠⠬⠦⢤⣀⠈⠓⢽⣾⢔⣡⡴⠞⠻⠙⢳⡄\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣵⣳⠖⠉⠉⢉⣩⣵⣿⣿⣒⢤⣴⠤⠽⣬⡇\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢻⣟⠟⠋⢡⡎⢿⢿⠳⡕⢤⡉⡷⡽⠁\n⣧⢮⢭⠛⢲⣦⣀⠀⠀⠀⠠⡀⠀⠀⠀⡾⣥⣏⣖⡟⠸⢺⠀⠀⠈⠙⠋⠁⠀⠀\n⠈⠻⣶⡛⠲⣄⠀⠙⠢⣀⠀⢇⠀⠀⠀⠘⠿⣯⣮⢦⠶⠃⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⢻⣿⣥⡬⠽⠶⠤⣌⣣⣼⡔⠊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⢠⣿⣧⣤⡴⢤⡴⣶⣿⣟⢯⡙⠒⠤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠘⣗⣞⣢⡟⢋⢜⣿⠛⡿⡄⢻⡮⣄⠈⠳⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠈⠻⠮⠴⠵⢋⣇⡇⣷⢳⡀⢱⡈⢋⠛⣄⣹⣲⡀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣱⡇⣦⢾⣾⠿⠟⠿⠷⠷⣻⠧⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠻⠽⠞⠊⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"}
+            </pre>
+            <span class="sidebar-card__title">Megan&rsquo;s World</span>
+            <dl class="sidebar-card__fields">
+              <div>
+                <dt>Visitor</dt>
+                <dd>{visitorCard.name}</dd>
+              </div>
+            </dl>
+            {visitorCard.signature && (
+              <img
+                src={visitorCard.signature}
+                alt=""
+                class="sidebar-card__signature"
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+            <div class="sidebar-card__footer">
+              <span class="sidebar-card__number">No. {visitorCard.number}</span>
+              <span class="sidebar-card__sig">
+                x <span class="sidebar-card__sigline" />
+              </span>
+            </div>
+          </a>
+        </div>
+      </div>
+    )
+  }
+
+  <div
+    class="sidebar-status mt-auto -mb-3 font-[family-name:var(--font-mono)] text-base uppercase text-[var(--color-ink-dim)] leading-snug"
+  >
+    <p data-sidebar-clock>--:--:-- --</p>
+  </div>
+</aside>
+
+<style>
+  /* Desktop: static rail, tab and backdrop hidden.
+     Sidebar gets a stacking context so ToC hover previews
+     float above main content (which uses transforms/opacity).
+
+     Default `overflow: visible` keeps hover previews escaping right.
+     When viewport too short for content, `data-needs-scroll` toggles
+     vertical scroll + horizontal clip and hides the previews (which
+     would otherwise be clipped). JS sets the attribute. */
+  .site-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    align-self: flex-start;
+    z-index: 40;
+    overflow: visible;
+  }
+  .site-sidebar[data-needs-scroll] {
+    overflow-y: auto;
+    overflow-x: clip;
+    scrollbar-gutter: stable;
+  }
+  .site-sidebar[data-needs-scroll] :global(.toc-preview),
+  .site-sidebar[data-needs-scroll] .sidebar-card-popover {
+    display: none;
+  }
+
+  .sidebar-tab,
+  .sidebar-backdrop,
+  .sidebar-close {
+    display: none;
+  }
+
+  /* Mini visitor card — compact pill that expands to a card popover on hover. */
+  .sidebar-visitor-card-wrap {
+    position: relative;
+  }
+  .sidebar-card-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px 4px 10px;
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    color: var(--color-ink-dim);
+    background: var(--color-bg-neutral-2);
+    transition:
+      background var(--duration-fast) var(--ease-out-soft),
+      color var(--duration-fast) var(--ease-out-soft);
+  }
+  .sidebar-card-pill:hover {
+    color: var(--color-ink);
+    background: #cfc7af;
+  }
+  .sidebar-card-pill__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  [data-color="pink"] .sidebar-card-pill__dot {
+    background: var(--color-pink);
+  }
+  [data-color="teal"] .sidebar-card-pill__dot {
+    background: var(--color-teal);
+  }
+  [data-color="green"] .sidebar-card-pill__dot {
+    background: var(--color-green);
+  }
+  [data-color="orange"] .sidebar-card-pill__dot {
+    background: var(--color-orange);
+  }
+  [data-color="neutral"] .sidebar-card-pill__dot {
+    background: var(--color-fg-neutral);
+  }
+
+  /* Popover card — floats to the right on hover, like ToC previews. */
+  .sidebar-card-popover {
+    position: absolute;
+    left: calc(100% + 16px);
+    top: 50%;
+    transform: translateY(-50%) translateX(-8px);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 220ms var(--ease-out-soft),
+      transform 280ms var(--ease-out-soft);
+    z-index: 50;
+  }
+  .sidebar-visitor-card-wrap:hover .sidebar-card-popover {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(-50%) translateX(0);
+  }
+  .sidebar-card-popover__link {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    min-height: 130px;
+    padding: 14px 16px 12px;
+    border-radius: 14px;
+    font-family: var(--font-mono);
+    color: var(--color-ink-inverted);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 18px 36px -16px rgba(36, 36, 36, 0.35),
+      0 4px 10px -4px rgba(36, 36, 36, 0.2);
+  }
+  [data-color="pink"] .sidebar-card-popover__link {
+    background: var(--color-pink);
+  }
+  [data-color="teal"] .sidebar-card-popover__link {
+    background: var(--color-teal);
+  }
+  [data-color="green"] .sidebar-card-popover__link {
+    background: var(--color-green);
+  }
+  [data-color="orange"] .sidebar-card-popover__link {
+    background: var(--color-orange);
+  }
+  [data-color="neutral"] .sidebar-card-popover__link {
+    background: var(--color-bg-neutral-2);
+    color: var(--color-ink);
+  }
+  .sidebar-card-popover__link:hover {
+    transform: scale(1.03) rotate(-0.5deg);
+    transition: transform var(--duration-fast) var(--ease-out-soft);
+  }
+  .sidebar-card__art {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 5px;
+    line-height: 1.08;
+    opacity: 0.35;
+    pointer-events: none;
+    white-space: pre;
+    margin: 0;
+  }
+  .sidebar-card__title {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 1;
+    text-transform: none;
+  }
+  .sidebar-card__fields {
+    margin-top: 6px;
+  }
+  .sidebar-card__fields dt {
+    font-size: 7px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    line-height: 1;
+  }
+  .sidebar-card__fields dd {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    margin: 2px 0 0;
+  }
+  .sidebar-card__footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: auto;
+    position: relative;
+  }
+  .sidebar-card__number {
+    font-size: 7px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    line-height: 1;
+  }
+  .sidebar-card__sig {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    font-size: 10px;
+    line-height: 1;
+    flex: 1;
+    margin-left: 14px;
+  }
+  .sidebar-card__sigline {
+    display: block;
+    flex: 1;
+    border-bottom: 1px solid var(--color-ink-inverted);
+    margin-bottom: 1px;
+  }
+  [data-color="neutral"] .sidebar-card__sigline {
+    border-color: var(--color-ink);
+  }
+  .sidebar-card__signature {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    object-position: center bottom;
+    pointer-events: none;
+    mix-blend-mode: normal;
+  }
+  [data-color]:not([data-color="neutral"]) .sidebar-card__signature {
+    filter: brightness(0) invert(1);
+  }
+  @media (max-width: 1023px) {
+    .sidebar-card-popover {
+      display: none;
+    }
+  }
+
+  /* Flash highlight applied to the gallery card we just scrolled to.
+     Uses a global selector so it can target [data-mini-card-wrap] in Grid. */
+  :global(.mini-card-wrap.sidebar-card-flash) {
+    animation: sidebar-card-flash 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes sidebar-card-flash {
+    0% {
+      filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+      transform: scale(1);
+    }
+    20% {
+      filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.7))
+        drop-shadow(0 14px 22px rgba(0, 0, 0, 0.22));
+      transform: scale(1.04);
+    }
+    100% {
+      filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+      transform: scale(1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.mini-card-wrap.sidebar-card-flash) {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .site-sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 50;
+      max-width: 85vw;
+      transform: translateX(-100%);
+      transition: transform var(--duration-base) var(--ease-out-soft);
+      box-shadow: 2px 0 28px -8px rgba(36, 36, 36, 0.15);
+      overflow-y: auto;
+    }
+    .site-sidebar[data-open] {
+      transform: translateX(0);
+    }
+
+    .sidebar-backdrop {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 45;
+      background: rgba(36, 36, 36, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--duration-base) var(--ease-out-soft);
+    }
+    .sidebar-backdrop[data-open] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sidebar-tab {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      position: fixed;
+      top: 50%;
+      left: 0;
+      z-index: 40;
+      padding: 14px 8px 14px 6px;
+      background: var(--color-bg-neutral-2);
+      color: var(--color-ink);
+      border: 0;
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+      box-shadow: 2px 0 12px -4px rgba(36, 36, 36, 0.15);
+      cursor: pointer;
+      transform: translateY(-50%);
+      transition:
+        transform var(--duration-fast) var(--ease-out-soft),
+        background var(--duration-fast) var(--ease-out-soft);
+    }
+    .sidebar-tab:hover {
+      transform: translate(3px, -50%);
+      background: #cfc7af;
+    }
+    .sidebar-tab:focus-visible {
+      outline: 2px solid var(--color-ink);
+      outline-offset: 2px;
+    }
+    .sidebar-tab-dots {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .sidebar-tab-dots span {
+      display: block;
+      width: 3px;
+      height: 3px;
+      border-radius: 9999px;
+      background: var(--color-ink-dim);
+    }
+    .sidebar-tab-arrow {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      line-height: 1;
+      color: var(--color-ink);
+    }
+
+    /* Hide the tab while the sidebar is open so it doesn't peek through */
+    body:has(.site-sidebar[data-open]) .sidebar-tab {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .sidebar-close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 9999px;
+      background: transparent;
+      color: var(--color-ink-dim);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      transition:
+        background var(--duration-fast) var(--ease-out-soft),
+        color var(--duration-fast) var(--ease-out-soft);
+    }
+    .sidebar-close:hover {
+      background: var(--color-bg-neutral-2);
+      color: var(--color-ink);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-sidebar,
+    .sidebar-backdrop,
+    .sidebar-tab {
+      transition: none;
+    }
+  }
+
+  /* Logo spin + sparks on tap. */
+  .sidebar-logo-link {
+    overflow: visible;
+  }
+  .sidebar-logo-spin {
+    display: inline-block;
+  }
+  .sidebar-logo-sparks .spark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 9999px;
+    background: var(--spark-color, var(--color-pink));
+    box-shadow: 0 0 6px var(--spark-color, var(--color-pink));
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    animation: sidebar-logo-spark 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes sidebar-logo-spark {
+    0% {
+      opacity: 1;
+      transform: translate(-50%, -50%) translate(0, 0) scale(0.6);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%) translate(var(--spark-dx, 0px), var(--spark-dy, 0px))
+        scale(0.9);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar-logo-sparks .spark {
+      animation: none;
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  /*
+    Wire the sidebar on every ClientRouter swap. We re-query the elements each
+    time so references stay valid, and guard each wiring with `data-wired` so
+    we don't stack listeners.
+  */
+  function wireSidebar() {
+    const sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
+    const toggle = document.querySelector<HTMLElement>("[data-sidebar-toggle]");
+    const backdrop = document.querySelector<HTMLElement>("[data-sidebar-backdrop]");
+    const closeBtn = document.querySelector<HTMLElement>("[data-sidebar-close]");
+
+    function openSidebar() {
+      sidebar?.setAttribute("data-open", "");
+      backdrop?.setAttribute("data-open", "");
+      toggle?.setAttribute("aria-expanded", "true");
+    }
+    function closeSidebar() {
+      sidebar?.removeAttribute("data-open");
+      backdrop?.removeAttribute("data-open");
+      toggle?.setAttribute("aria-expanded", "false");
+    }
+
+    if (toggle && toggle.dataset.wired !== "1") {
+      toggle.dataset.wired = "1";
+      toggle.addEventListener("click", openSidebar);
+    }
+    if (closeBtn && closeBtn.dataset.wired !== "1") {
+      closeBtn.dataset.wired = "1";
+      closeBtn.addEventListener("click", closeSidebar);
+    }
+    if (backdrop && backdrop.dataset.wired !== "1") {
+      backdrop.dataset.wired = "1";
+      backdrop.addEventListener("click", closeSidebar);
+    }
+
+    // Toggle `data-needs-scroll` when sidebar content exceeds viewport height.
+    // Keeps hover previews unclipped on tall screens; switches to scrollable
+    // mode + hides previews on short screens (where they'd be clipped anyway).
+    if (sidebar && sidebar.dataset.scrollWired !== "1") {
+      sidebar.dataset.scrollWired = "1";
+      let pending = 0;
+      const updateNeedsScroll = () => {
+        if (pending) return;
+        pending = requestAnimationFrame(() => {
+          pending = 0;
+          // Force scroll mode briefly to measure true content height. With
+          // overflow:visible + `mt-auto` on status, auto margins can collapse
+          // (overlap) so scrollHeight==clientHeight even when content doesn't
+          // fit. Switching to scroll mode reveals the real content size.
+          sidebar.setAttribute("data-needs-scroll", "");
+          const overflows = sidebar.scrollHeight > sidebar.clientHeight + 1;
+          if (!overflows) sidebar.removeAttribute("data-needs-scroll");
+        });
+      };
+      updateNeedsScroll();
+      if ("ResizeObserver" in window) {
+        const ro = new ResizeObserver(() => updateNeedsScroll());
+        ro.observe(sidebar);
+        Array.from(sidebar.children).forEach((c) => ro.observe(c as Element));
+      }
+      window.addEventListener("resize", updateNeedsScroll);
+    }
+  }
+
+  // Document-level listeners are stable across ClientRouter swaps, so attach
+  // them exactly once per document.
+  if (!(window as any).__sidebarGlobalsWired) {
+    (window as any).__sidebarGlobalsWired = true;
+    document.addEventListener("keydown", (event) => {
+      const sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
+      if (event.key === "Escape" && sidebar?.hasAttribute("data-open")) {
+        sidebar.removeAttribute("data-open");
+        document.querySelector("[data-sidebar-backdrop]")?.removeAttribute("data-open");
+        document.querySelector("[data-sidebar-toggle]")?.setAttribute("aria-expanded", "false");
+      }
+    });
+    const desktopQuery = window.matchMedia("(min-width: 1024px)");
+    desktopQuery.addEventListener("change", (event) => {
+      if (event.matches) {
+        document.querySelector("[data-sidebar]")?.removeAttribute("data-open");
+        document.querySelector("[data-sidebar-backdrop]")?.removeAttribute("data-open");
+      }
+    });
+
+    // Live clock — queries the current node each tick so SPA swaps keep it ticking.
+    function tickSidebarClock() {
+      const el = document.querySelector<HTMLElement>("[data-sidebar-clock]");
+      if (!el) return;
+      const now = new Date();
+      const h12 = ((now.getHours() + 11) % 12) + 1;
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      const ss = String(now.getSeconds()).padStart(2, "0");
+      const ampm = now.getHours() >= 12 ? "PM" : "AM";
+      el.textContent = `${h12}:${mm}:${ss} ${ampm}`;
+    }
+    tickSidebarClock();
+    setInterval(tickSidebarClock, 1000);
+  }
+
+  /*
+    Logo tap — spin the mark + emit a small burst of colored sparks. The
+    click stays a link navigation; we just layer the animation on top.
+  */
+  const SPARK_COLORS = [
+    "var(--color-pink)",
+    "var(--color-teal)",
+    "var(--color-orange)",
+    "var(--color-green-1)",
+  ];
+  function wireLogo() {
+    document.querySelectorAll<HTMLElement>("[data-logo-link]:not([data-wired])").forEach((link) => {
+      link.dataset.wired = "1";
+      const sparks = link.querySelector<HTMLElement>("[data-logo-sparks]");
+      link.addEventListener("click", () => {
+        if (sparks) {
+          const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+          if (reduced) return;
+          const count = 10;
+          for (let i = 0; i < count; i++) {
+            const angle = (i / count) * Math.PI * 2 + Math.random() * 0.4;
+            const dist = 24 + Math.random() * 16;
+            const el = document.createElement("span");
+            el.className = "spark";
+            el.style.setProperty("--spark-dx", `${Math.cos(angle) * dist}px`);
+            el.style.setProperty("--spark-dy", `${Math.sin(angle) * dist}px`);
+            el.style.setProperty("--spark-color", SPARK_COLORS[i % SPARK_COLORS.length]);
+            sparks.appendChild(el);
+            window.setTimeout(() => el.remove(), 720);
+          }
+        }
+      });
+    });
+  }
+
+  /*
+    Visitor-card pill — when on /visitor-gallery, intercept the click and
+    scroll to the user's own card in the grid instead of re-navigating. The
+    grid exposes the visitor id via [data-gallery-grid][data-you-id], set
+    server-side and patched by the localStorage fallback if needed.
+  */
+  function wireSidebarCard() {
+    document
+      .querySelectorAll<HTMLAnchorElement>("[data-sidebar-card]:not([data-wired])")
+      .forEach((pill) => {
+        pill.dataset.wired = "1";
+        pill.addEventListener("click", (e) => {
+          // Off-gallery click: leave nav alone, just flag the intent so the
+          // gallery page scrolls to the user's card after it mounts.
+          if (location.pathname !== "/visitor-gallery") {
+            try {
+              sessionStorage.setItem("gallery:scroll-to-you", "1");
+            } catch {}
+            return;
+          }
+          const grid = document.querySelector<HTMLElement>("[data-gallery-grid]");
+          const youId = grid?.dataset.youId;
+          if (!grid || !youId) return;
+          const card = grid.querySelector<HTMLElement>(`[data-mini-card-wrap][data-id="${youId}"]`);
+          if (!card) return;
+          e.preventDefault();
+          const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+          const flash = () => {
+            card.classList.add("sidebar-card-flash");
+            window.setTimeout(() => card.classList.remove("sidebar-card-flash"), 1400);
+          };
+          card.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+          // Wait for scroll to settle before flashing — pulse plays mid-scroll
+          // otherwise and the user can't see it.
+          if (reduced) {
+            flash();
+          } else {
+            let settled = false;
+            const fire = () => {
+              if (!settled) {
+                settled = true;
+                flash();
+              }
+            };
+            const hasScrollEnd = "onscrollend" in window;
+            if (hasScrollEnd) {
+              window.addEventListener("scrollend", fire, { once: true });
+              window.setTimeout(fire, 1200);
+            } else {
+              let lastY = window.scrollY;
+              let stable = 0;
+              const tick = () => {
+                if (settled) return;
+                const y = window.scrollY;
+                if (Math.abs(y - lastY) < 0.5) {
+                  if (++stable >= 4) return fire();
+                } else {
+                  stable = 0;
+                  lastY = y;
+                }
+                requestAnimationFrame(tick);
+              };
+              requestAnimationFrame(tick);
+              window.setTimeout(fire, 1200);
+            }
+          }
+          // Close the mobile sidebar so the card isn't covered.
+          document.querySelector<HTMLElement>("[data-sidebar]")?.removeAttribute("data-open");
+          document
+            .querySelector<HTMLElement>("[data-sidebar-backdrop]")
+            ?.removeAttribute("data-open");
+        });
+      });
+  }
+
+  function init() {
+    wireSidebar();
+    wireLogo();
+    wireSidebarCard();
+  }
+  init();
+  document.addEventListener("astro:page-load", init);
+</script>

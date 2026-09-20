@@ -1,0 +1,31 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Sparkles from "../components/scenery/Sparkles.astro";
+import StatusClock from "../components/scenery/StatusClock.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  showSparkles?: boolean;
+  showClock?: boolean;
+  canonical?: string;
+}
+
+const {
+  title,
+  description,
+  image,
+  showSparkles = true,
+  showClock = true,
+  canonical,
+} = Astro.props;
+---
+
+<BaseLayout title={title} description={description} image={image} canonical={canonical} bodyClass="bg-[var(--color-ink)] text-[var(--color-ink-inverted)]" darkHtml showPet={false}>
+  <div class="relative min-h-dvh overflow-hidden">
+    {showSparkles && <Sparkles />}
+    <slot />
+    {showClock && <StatusClock />}
+  </div>
+</BaseLayout>
