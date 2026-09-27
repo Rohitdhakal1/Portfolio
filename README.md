@@ -1,77 +1,76 @@
 # Rohit's World — Portfolio
 
-A cosmos-themed personal portfolio built with React, TypeScript, and Vite. Features an immersive starfield, shooting stars, custom cursor, interactive click-to-birth stars, and parallax text effects.
+A design-focused personal portfolio built with React 19, TypeScript, and Vite. The site blends a cosmic space aesthetic with a warm, cream-paper design system featuring custom UI primitives, interactive cards, and a token-based layout.
+
+> **Design & Inspiration Credit:** Original portfolio design, visual aesthetics, and component concepts credit go to **Megan** ([@megan128](https://github.com/megany128/portfolio)). This repository is a React 19 + TypeScript SPA migration and customization built for my personal projects.
 
 ## Tech Stack
 
 - **React 19** — UI library
 - **TypeScript** — Type safety
 - **Vite** — Build tool & dev server
-- **Tailwind CSS v4** — Styling
-- **Gelica & Source Code Pro** — Custom fonts
+- **Tailwind CSS v4** — Styling via `@tailwindcss/vite`
+- **React Router DOM 7** — Client-side routing
+- **Gelica & Source Code Pro** — Custom typography
 
-## Features
+## Project Status
 
-- **Animated Starfield** — Three-layer rotating starfield with twinkling stars
-- **Shooting Stars** — Periodic shooting star animations across the sky
-- **Interactive Stars** — Click anywhere to birth new stars with ripple pulse effects
-- **Custom Cursor** — Animated cursor that reacts to hoverable elements
-- **Parallax Text** — Title and quote words respond to pointer proximity
-- **Live Clock** — Real-time clock displayed in the corner
-- **Reduced Motion** — Full accessibility support for motion preferences
-- **Scalable Architecture** — Structured for multi-page expansion with dedicated `pages/` and `components/` directories
+Currently migrating from the original Astro/Cloudflare architecture to a pure React SPA using a component-by-component conversion workflow.
+
+### Component Conversion Progress
+
+- [x] **UI Primitives:** `Tag.tsx`, `Button.tsx`, `Logo.tsx`, `Field.tsx`
+- [x] **Layout & Navigation:** `Sidebar.tsx`, `Footer.tsx`, `StatusClock.tsx`
+- [ ] **Data Display & Projects:** `ProjectCard.tsx` (In Progress), `ProjectIndexCard.tsx`, `LatestLog.tsx`
+- [ ] **Interactive Features:** Onboarding flow, Visitor Card, and Site Pet
+
+## Features & Highlights
+
+- **Design System Tokens** — Consistent styling built on custom CSS variables mapped in `tokens.css`.
+- **Isolated Sandbox (`/sandbox`)** — Dedicated routing workspace for testing and previewing UI primitives without modifying live pages.
+- **SPA Routing** — Client-side navigation via React Router DOM (`Link` for internal, `<a>` for external).
+- **Reduced Motion Support** — Accessible fallbacks for animations based on user system preferences.
+
+## Routing
+
+| Path           | Component        | Description                          |
+| -------------- | ---------------- | ------------------------------------ |
+| `/`            | `HomePage`       | Portfolio landing page               |
+| `/onboarding`  | `OnboardingPage` | Visitor onboarding flow              |
+| `/sandbox`     | `Sandbox`        | Component development & test harness |
 
 ## Scripts
 
-| Command       | Description                     |
-| ------------- | ------------------------------- |
-| `npm run dev`      | Start development server        |
-| `npm run build`    | Build for production            |
-| `npm run lint`     | Run ESLint                      |
-| `npm run preview`  | Preview production build        |
+| Command           | Description                      |
+| ----------------- | -------------------------------- |
+| `npm run dev`     | Starts the Vite development server |
+| `npm run build`   | Builds the app for production    |
+| `npm run lint`    | Runs ESLint to check code quality |
+| `npm run preview` | Previews the production build    |
 
 ## Project Structure
 
-```
+```text
 src/
 ├── components/
-│   ├── welcome/                 # Shared welcome/landing components
-│   │   ├── Starfield.tsx        # Three-layer animated starfield
-│   │   ├── ShootingStars.tsx    # Shooting star animations
-│   │   ├── WelcomeHero.tsx      # Hero section with parallax text
-│   │   └── WelcomeCursor.tsx    # Custom animated cursor
-│   └── <shared>/                # Reusable components across pages
+│   ├── home/                  # Layout and card components
+│   │   ├── Footer.tsx         # Color-themed interactive footer
+│   │   ├── ProjectCard.tsx    # Portfolio project showcase card
+│   │   └── Sidebar.tsx        # Navigation sidebar
+│   ├── scenery/               # Decorative and status widgets
+│   │   └── StatusClock.tsx    # Live time display widget
+│   └── ui/                    # Base UI primitives
+│       ├── Button.tsx         # Polymorphic button (primary/ghost/outline)
+│       ├── Field.tsx          # Styled input field
+│       ├── Logo.tsx           # Brand logo mark
+│       └── Tag.tsx            # Accent badge tag
 ├── pages/
-│   ├── HomePage.tsx             # Landing / welcome page
-│   └── <new-page>.tsx           # Future pages
-├── App.tsx                      # Root component (router entry)
-├── main.tsx                     # Entry point
-└── index.css                    # Global styles, theme variables, animations
-```
-
-The `App.tsx` currently renders `HomePage` directly. Future pages will be added
-under `src/pages/` and wired in via a router (e.g. React Router) at
-`src/App.tsx`. Shared UI lives under `src/components/` and is organized by
-domain (e.g. `welcome/`).
-
-## Design Tokens
-
-The project uses CSS custom properties for theming, organized in `src/index.css`:
-
-| Variable              | Value      | Usage             |
-| --------------------- | ---------- | ----------------- |
-| `--color-cosmos`      | `#242424`  | Primary background |
-| `--color-ink`         | `#242424`  | Dark text          |
-| `--color-ink-inverted`| `#ffffff`  | Light text         |
-| `--color-ink-mute`    | `#a2a2a2`  | Muted text         |
-| `--color-pink`        | `#bf5a7a`  | Accent             |
-| `--color-teal`        | `#168b9d`  | Accent             |
-| `--color-orange`      | `#cb7836`  | Accent             |
-
-## Browser Support
-
-- Chrome / Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-
-Supports `prefers-reduced-motion` for users who prefer minimal animation.
+│   ├── HomePage.tsx           # Home view
+│   └── OnboardingPage.tsx     # Onboarding view
+├── styles/
+│   ├── fonts.css              # Custom font face imports
+│   ├── global.css             # Base CSS reset
+│   └── tokens.css             # CSS variable design tokens
+├── App.tsx                    # React Router configuration
+├── Sandbox.tsx                # Isolated UI component playground
+└── main.tsx                   # Vite entry point
