@@ -1,4 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500;600&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500;600&display=swap"); */
+@import "./styles/fonts.css";
+@import "./styles/tokens.css";
+@import "./styles/global.css";
 @import "tailwindcss";
 
 @theme {
@@ -177,6 +180,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .btn-springy,
   .btn-springy:hover,
   .btn-springy:active {
@@ -268,6 +272,7 @@
 }
 
 @keyframes star-twinkle {
+
   0%,
   100% {
     opacity: 0.7;
@@ -337,6 +342,7 @@
 }
 
 @keyframes star-glyph-twinkle {
+
   0%,
   84%,
   96%,
@@ -458,8 +464,7 @@ html[data-welcome-cursor-active] {
 
   transform: rotate(var(--shoot-angle)) translate3d(0, 0, 0);
 
-  animation: shooting-star var(--shoot-duration) cubic-bezier(0.22, 1, 0.36, 1)
-    forwards;
+  animation: shooting-star var(--shoot-duration) cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes shooting-star {
@@ -480,8 +485,7 @@ html[data-welcome-cursor-active] {
   100% {
     opacity: 0;
 
-    transform: rotate(var(--shoot-angle))
-      translate3d(var(--shoot-dx), var(--shoot-dy), 0);
+    transform: rotate(var(--shoot-angle)) translate3d(var(--shoot-dx), var(--shoot-dy), 0);
   }
 }
 
@@ -490,6 +494,7 @@ html[data-welcome-cursor-active] {
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
+
   .starfield--far,
   .starfield--mid,
   .starfield--near,
