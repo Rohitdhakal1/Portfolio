@@ -21,7 +21,7 @@ Currently migrating from the original Astro/Cloudflare architecture to a pure Re
 
 - [x] **UI Primitives:** `Tag.tsx`, `Button.tsx`, `Logo.tsx`, `Field.tsx`
 - [x] **Layout & Navigation:** `Sidebar.tsx`, `Footer.tsx`, `StatusClock.tsx`
-- [ ] **Data Display & Projects:** `ProjectCard.tsx` (In Progress), `ProjectIndexCard.tsx`, `LatestLog.tsx`
+- [ ] **Data Display & Projects:** `ProjectCard.tsx` (In Progress), `ProjectIndexCard.tsx`(In Progress), `LatestLog.tsx`
 - [ ] **Interactive Features:** Onboarding flow, Visitor Card, and Site Pet
 
 ## Features & Highlights
